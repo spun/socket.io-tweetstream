@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<title>Tweetstream</title>
+		<link href="css/style.css" rel="stylesheet" type="text/css">
+		<style>
+			* {
+				margin: 0;
+				padding: 0;	
+			}
+
+			body {
+				background-color: #2F2F2F;
+				font-family: Arial, "Lucida Grande", "Lucida Sans", Tahoma, Verdana, sans-serif;
+			}
+			
+			h1 {
+				color: #222;
+				text-shadow: 0px 1px 1px #666;
+			}
+
+			#content {				
+				width: 768px;
+				margin: 20px auto 0 auto;
+			}
+
+			.tweet-box {
+				color: white;	
+				font-size: 0.9em;
+				box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+				background: #202020;
+				background-color: rgba(0, 0, 0, 0.3);			
+				margin: 10px auto;				
+				padding: 10px;
+				width: 700px;
+				min-height: 70px;
+				overflow: hidden;
+				display: none;
+			}
+
+			.user-image {
+				float: left;
+				width: 70px;
+			}
+
+			.tweet-content {				
+				margin-left: 15px;
+				width: 615px;
+				float: left;
+			}
+
+			.tweet-content .tweet-author {
+				color: #09f;
+				margin-bottom: 5px;
+			}		
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io.connect();
+			socket.on('new tweet', function (data) {
+				if(data!="")
+				{
+					var datos = JSON.parse(data);
+					
+					// tweet box
+					var box = $("<li></li>", {
+						class: 'tweet-box'
+					}).prependTo("#listado");
+					
+					// author avatar
+					$("<img/>", {
+						class: 'user-image', 
+						src: datos.user.profile_image_url
+					}).appendTo(box);
+					
+					// content div
+					var content = $("<div></div>", {
+						class: 'tweet-content'
+					}).appendTo(box);
+					
+					// author
+					$("<p></p>", {
+						class: 'tweet-author',
+						text: datos.user.screen_name
+					}).appendTo(content);
+								
+					// text
+					$("<p></p>", {
+						class: 'tweet-text',
+						text: datos.text
+					}).appendTo(content);
+					
+					box.fadeIn();
+				}
+				else
+					console.log("no-data");
+			});
+		</script>
+	</head>
+	<body>
+		<h1>Tweetstream</h1>
+		<div id="content">
+			<ul id="listado">
+			</ul>		
+		</div>	
+	</body>
+</html>
